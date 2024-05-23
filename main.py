@@ -1,3 +1,4 @@
+import pickle
 from collections import UserDict
 from datetime import datetime, timedelta
 
@@ -135,8 +136,19 @@ def birthdays(_, book: AddressBook):
         return "\n".join(f"{name}: {date}" for name, date in upcoming)
     return "No birthdays in the next week."
 
+def save_data(book, filename="addressbook.pkl"):
+    with open(filename, "wd") as f:
+        pickle.dump(book, f)
+
+def load_data(filename="adressbook.pkl"):
+    try:
+        with open(filename, "rb") as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        return AddressBook()
+
 def main():
-    book = AddressBook()
+    book = load_data()
     print("Welcome to the assistant bot!")
     while True:
         user_input = input("Enter a command: ")
@@ -144,6 +156,7 @@ def main():
 
         if command in ["close", "exit"]:
             print("Good bye!")
+            save_data(book)
             break
 
         elif command == "hello":
